@@ -1,5 +1,6 @@
 package com.Arjun.MyMarket.product.dto;
 
+import com.Arjun.MyMarket.product.entity.Product;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,4 +20,6 @@ public class ReviewDto {
     private String title;
     private String comment;
     private Integer rating;
+    private ProductDto productDto;
+
 }

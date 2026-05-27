@@ -1,5 +1,6 @@
 package com.Arjun.MyMarket.product.dto;
 
+import com.Arjun.MyMarket.product.entity.Category;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -23,4 +26,7 @@ public class ProductDto {
     private String longDesc;
     private Double price;
     private Boolean live=false;
+    private List<String> productImages;
+    private List<CategoryDto> categories;
+    private List<ReviewDto> reviews;
 }
