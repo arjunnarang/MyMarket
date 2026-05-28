@@ -34,4 +34,6 @@ public interface ProductService {
     List<String> getProductImages(UUID productId);
 
     List<ProductDto> getAllProducts();
+
+    List<ProductDto> getProductsByCategoryId(Long categoryId);
 }

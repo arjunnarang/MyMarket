@@ -44,4 +44,9 @@ public class ProductController {
     public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID productId, @RequestBody ProductDto productDto){
         return ResponseEntity.ok(productService.updateProduct(productId, productDto));
     }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductDto>> getProductsByCategoryId(@PathVariable Long categoryId){
+        return ResponseEntity.ok(productService.getProductsByCategoryId(categoryId));
+    }
 }

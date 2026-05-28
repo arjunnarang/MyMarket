@@ -120,6 +120,18 @@ public class ProductServiceImpl implements ProductService {
         return toDto(product);
     }
 
+    public List<ProductDto> getProductsByCategoryId(Long categoryId){
+
+         List<Product> products = productRepo.findByCategoryId(categoryId);
+         List<ProductDto> productDtoList = new ArrayList<>();
+         for(Product product : products){
+             productDtoList.add(toDto(product));
+         }
+
+         return productDtoList;
+    }
+
+
     private void applyBasicFields(Product product, ProductDto productDto){
 
 

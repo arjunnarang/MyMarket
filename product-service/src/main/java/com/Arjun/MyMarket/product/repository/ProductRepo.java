@@ -14,7 +14,7 @@ import java.util.UUID;
 @Repository
 public interface ProductRepo extends JpaRepository<Product, UUID> {
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.categories c where c.id = :categoryId")
+   @Query("SELECT p FROM Product p JOIN FETCH p.categories c where c.id = :categoryId")
     List<Product> findByCategoryId(@Param("categoryId")Long categoryId);
 
     //Page<Product> findByCategory_Id(Long categoryId, Pageable pageable);
