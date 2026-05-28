@@ -39,4 +39,9 @@ public class ProductController {
         List<ProductDto> productDtoList = productService.getAllProducts();
         return ResponseEntity.ok(productDtoList);
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID productId, @RequestBody ProductDto productDto){
+        return ResponseEntity.ok(productService.updateProduct(productId, productDto));
+    }
 }

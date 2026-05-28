@@ -104,11 +104,34 @@ public class ProductServiceImpl implements ProductService {
         return toDto(product);
     }
 
+    //updating product
     @Override
     public ProductDto updateProduct(UUID id, ProductDto productDto) {
-        return null;
+        Product product = findProduct(id);
+
+        applyBasicFields(product, productDto);
+
+        if(productDto.getCategories() != null){
+            resolveCategories(product, productDto);
+
+            syncCategoryLinks(product, product.getCategories());
+        }
+        productRepo.save(product);
+        return toDto(product);
     }
 
+    private void applyBasicFields(Product product, ProductDto productDto){
+
+
+        product.setTitle(productDto.getTitle());
+        product.setShortDesc(productDto.getShortDesc());
+        product.setLongDesc(productDto.getLongDesc());
+        product.setPrice(productDto.getPrice());
+        product.setLive(productDto.getLive());
+        if(productDto.getProductImages() != null){
+            product.setProductImages(new ArrayList<>(productDto.getProductImages()));
+        }
+    }
 
     //categories in product entity need to be saved in db
     private void syncCategoryLinks(Product product, List<Category> categories){
