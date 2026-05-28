@@ -62,8 +62,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto addCategoryToProduct(UUID productId, Long categoryId) {
-        return null;
+    public ProductDto addCategoryToProduct(UUID productId, Long categoryId){
+        Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        Category category = categoryRepo.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        if(!product.getCategories().contains(category)){
+            product.getCategories().add(category);
+        }
+        if(!category.getProducts().contains(product)){
+            category.getProducts().add(product);
+        }
+
+        productRepo.save(product);
+        categoryRepo.save(category);
+
+        return toDto(product);
     }
 
     @Override
@@ -120,17 +133,16 @@ public class ProductServiceImpl implements ProductService {
         return toDto(product);
     }
 
-    public List<ProductDto> getProductsByCategoryId(Long categoryId){
+    public List<ProductDto> getProductsByCategoryId(Long categoryId) {
 
-         List<Product> products = productRepo.findByCategoryId(categoryId);
-         List<ProductDto> productDtoList = new ArrayList<>();
-         for(Product product : products){
-             productDtoList.add(toDto(product));
-         }
+        List<Product> products = productRepo.findByCategoryId(categoryId);
+        List<ProductDto> productDtoList = new ArrayList<>();
+        for (Product product : products) {
+            productDtoList.add(toDto(product));
+        }
 
-         return productDtoList;
+        return productDtoList;
     }
-
 
     private void applyBasicFields(Product product, ProductDto productDto){
 

@@ -49,4 +49,9 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getProductsByCategoryId(@PathVariable Long categoryId){
         return ResponseEntity.ok(productService.getProductsByCategoryId(categoryId));
     }
+
+    @PostMapping("/{productId}/category/{categoryId}")
+    public ResponseEntity<ProductDto> addCategoryToProduct(@PathVariable UUID productId, @PathVariable Long categoryId){
+        return ResponseEntity.ok(productService.addCategoryToProduct(productId, categoryId));
+    }
 }
