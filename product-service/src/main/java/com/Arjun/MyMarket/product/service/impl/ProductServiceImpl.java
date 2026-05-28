@@ -10,8 +10,10 @@ import com.Arjun.MyMarket.product.exception.ResourceNotFoundException;
 import com.Arjun.MyMarket.product.repository.CategoryRepo;
 import com.Arjun.MyMarket.product.repository.ProductRepo;
 import com.Arjun.MyMarket.product.repository.ReviewRepo;
+import com.Arjun.MyMarket.product.service.CategoryService;
 import com.Arjun.MyMarket.product.service.ProductService;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.stereotype.Service;
@@ -20,17 +22,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
     private final ReviewRepo reviewRepo;
-
+    private final CategoryService categoryService;
     //finding product by id
     public ProductDto getProductById(UUID productId){
 
@@ -123,7 +127,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setProductImages(product.getProductImages() == null ? new ArrayList<>() : new ArrayList<>(product.getProductImages()));
         dto.setCategories(product.getCategories() == null ? new ArrayList<>(): product.getCategories().stream().map(category -> toDtoForCategory(category)).collect(Collectors.toList()));
         dto.setReviews(dto.getReviews() == null ? new ArrayList<>() : product.getReviews().stream().map(review -> toDtoForReview(review)).collect(Collectors.toList()));
-
+        dto.setCreatedAt(product.getCreatedAt());
         return dto;
     }
 
@@ -175,23 +179,27 @@ public class ProductServiceImpl implements ProductService {
         else {
             product.setProductImages(new ArrayList<>());
         }
+        product.setCreatedAt(productDto.getCreatedAt());
     }
 
     private void resolveCategories(Product product, ProductDto productDto) {
 
         List<Category> categoryList = new ArrayList<>();
         if(productDto.getCategories() != null){
-
             for(CategoryDto categoryDto : productDto.getCategories()){
-                if(categoryDto.getId() == null){
-                    Category category = new Category();
+
+                //to check if category is present inside category table
+                Category category = categoryRepo.findByTitle(categoryDto.getTitle());
+                if(category == null){
+                    category = new Category();
                     category.setTitle(categoryDto.getTitle());
                     category.setProducts(new ArrayList<>());
 
                     categoryRepo.save(category);
                     categoryList.add(category);
                 }else {
-                    categoryList.add(categoryRepo.findById(categoryDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Category not found" + categoryDto.getId())));
+                   // categoryList.add(categoryRepo.findById(categoryDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Category not found" + categoryDto.getId())));
+                    categoryList.add(category);
                 }
             }
         }
