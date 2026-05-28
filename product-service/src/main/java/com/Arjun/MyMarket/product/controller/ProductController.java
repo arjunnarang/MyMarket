@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,5 +29,14 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDto));
     }
 
+    @DeleteMapping("/{productId}")
+    public void deleteById(@PathVariable UUID productId){
+        productService.deleteProduct(productId);
+    }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductDto>> getAllProducts(){
+        List<ProductDto> productDtoList = productService.getAllProducts();
+        return ResponseEntity.ok(productDtoList);
+    }
 }

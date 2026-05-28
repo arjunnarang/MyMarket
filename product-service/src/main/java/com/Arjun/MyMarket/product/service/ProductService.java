@@ -32,4 +32,6 @@ public interface ProductService {
 
     //get product images
     List<String> getProductImages(UUID productId);
+
+    List<ProductDto> getAllProducts();
 }

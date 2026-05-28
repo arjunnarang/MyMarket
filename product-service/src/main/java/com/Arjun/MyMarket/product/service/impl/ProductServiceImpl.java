@@ -45,7 +45,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID productId) {
+        productRepo.deleteById(productId);
+    }
 
+    public List<ProductDto> getAllProducts(){
+
+
+        List<Product> productList = productRepo.findAll();
+        List<ProductDto> productDtoList = new ArrayList<>();
+
+        for(Product product : productList){
+            productDtoList.add(toDto(product));
+        }
+
+        return productDtoList;
     }
 
     @Override
