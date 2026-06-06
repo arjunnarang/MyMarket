@@ -9,6 +9,7 @@ import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,5 +65,10 @@ public class ProductController {
     @PostMapping("/{productId}/reviews")
     public ResponseEntity<ReviewDto> addReviewToProduct(@PathVariable UUID productId, @RequestBody ReviewDto reviewDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addReviewToProduct(productId, reviewDto));
+    }
+
+    @PostMapping(value="/{productId}/images", consumes="multipart/form-data")
+    public ResponseEntity<ProductDto> addImagesToProduct(@PathVariable UUID productId, @RequestParam("files") List<MultipartFile> files){
+        return ResponseEntity.ok(productService.addProductImages(productId, files));
     }
 }

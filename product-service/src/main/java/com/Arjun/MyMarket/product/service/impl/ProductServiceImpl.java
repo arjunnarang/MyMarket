@@ -80,11 +80,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto addProductImages(UUID productId, List<MultipartFile> images) {
-        return null;
-    }
-
-    @Override
     public List<String> getProductImages(UUID productId) {
         return List.of();
     }
@@ -175,6 +170,27 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Override
+    public ProductDto addProductImages(UUID productId, List<MultipartFile> images) {
+//       Product product = findProduct(productId);
+//
+//       List<String> urls = uploadImages(images);
+//
+//       if(product.getProductImages() == null){
+//           product.setProductImages(new ArrayList<>());
+//       }
+//       product.getProductImages().addAll(urls);
+//
+//       Product productSaved = productRepo.save(product);
+//
+//       return toDto(productSaved);
+
+        return null;
+    }
+
+//    private List<String> uploadImages(List<MultipartFile> images){
+//
+//    }
     private void applyBasicFields(Product product, ProductDto productDto){
 
 
