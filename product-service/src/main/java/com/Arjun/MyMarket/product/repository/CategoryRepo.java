@@ -6,12 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CategoryRepo extends JpaRepository<Category, Long> {
 
-    @Query("select c from Category c join c.products p where p.id = :productId")
-    List<Category> findByProductId(@Param("productId") String productId);
+    @Query("SELECT c from Category c JOIN FETCH c.products p WHERE p.id = :id")
+  List<Category> findCategoriesByProductId(UUID id);
 
-    //to find category by category title
     Category findByTitle(String title);
 }
