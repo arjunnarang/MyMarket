@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
@@ -28,6 +29,6 @@ public class Review {
     @ManyToOne
     private Product product;
 
-    @CreatedDate
+    @CreationTimestamp
     private Instant createdAt;
 }

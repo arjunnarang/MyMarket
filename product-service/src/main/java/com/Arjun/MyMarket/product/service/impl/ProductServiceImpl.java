@@ -80,11 +80,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ReviewDto addReviewToProduct(UUID productId, ReviewDto reviewDto) {
-        return null;
-    }
-
-    @Override
     public ProductDto addProductImages(UUID productId, List<MultipartFile> images) {
         return null;
     }
@@ -142,6 +137,42 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productDtoList;
+    }
+
+    public ProductDto removeCategoryFromProduct(UUID productId, Long categoryId) {
+        Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        Category category = categoryRepo.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        product.getCategories().remove(category);
+        category.getProducts().remove(product);
+
+        categoryRepo.save(category);
+        productRepo.save(product);
+
+        return toDto(product);
+    }
+
+    //adding review to product
+    @Override
+    public ReviewDto addReviewToProduct(UUID productId, ReviewDto reviewDto) {
+        Product product = findProduct(productId);
+
+        Review review = new Review();
+        review.setTitle(reviewDto.getTitle());
+        review.setComment(reviewDto.getComment());
+        review.setRating(reviewDto.getRating());
+        review.setProduct(product);
+
+        Review savedReview = reviewRepo.save(review);
+
+        if(product.getReviews() == null){
+            product.setReviews(new ArrayList<>());
+        }
+
+        product.getReviews().add(review);
+        productRepo.save(product);
+        return toDtoForReview(savedReview);
+
     }
 
     private void applyBasicFields(Product product, ProductDto productDto){

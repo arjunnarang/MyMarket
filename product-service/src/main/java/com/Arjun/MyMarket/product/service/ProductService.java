@@ -36,4 +36,6 @@ public interface ProductService {
     List<ProductDto> getAllProducts();
 
     List<ProductDto> getProductsByCategoryId(Long categoryId);
+
+    ProductDto removeCategoryFromProduct(UUID productId, Long categoryId);
 }

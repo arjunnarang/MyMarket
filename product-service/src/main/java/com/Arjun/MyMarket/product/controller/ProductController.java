@@ -1,6 +1,7 @@
 package com.Arjun.MyMarket.product.controller;
 
 import com.Arjun.MyMarket.product.dto.ProductDto;
+import com.Arjun.MyMarket.product.dto.ReviewDto;
 import com.Arjun.MyMarket.product.service.ProductService;
 import com.Arjun.MyMarket.product.service.impl.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +54,15 @@ public class ProductController {
     @PostMapping("/{productId}/category/{categoryId}")
     public ResponseEntity<ProductDto> addCategoryToProduct(@PathVariable UUID productId, @PathVariable Long categoryId){
         return ResponseEntity.ok(productService.addCategoryToProduct(productId, categoryId));
+    }
+
+    @DeleteMapping("/{productId}/category/{categoryId}")
+    public ResponseEntity<ProductDto> removeCategoryFromProduct(@PathVariable UUID productId, @PathVariable Long categoryId){
+        return ResponseEntity.ok(productService.removeCategoryFromProduct(productId, categoryId));
+    }
+
+    @PostMapping("/{productId}/reviews")
+    public ResponseEntity<ReviewDto> addReviewToProduct(@PathVariable UUID productId, @RequestBody ReviewDto reviewDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addReviewToProduct(productId, reviewDto));
     }
 }

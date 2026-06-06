@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,5 +23,5 @@ public class ReviewDto {
     private String comment;
     private Integer rating;
     private ProductDto productDto;
-
+    private Instant createdAt;
 }
