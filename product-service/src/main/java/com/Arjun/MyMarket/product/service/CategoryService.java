@@ -13,4 +13,6 @@ public interface CategoryService {
     CategoryDto getCategoryById(Long id);
 
     List<CategoryDto> getCategoriesByProductId(UUID id);
+
+    CategoryDto createCategory(CategoryDto categoryDto);
 }

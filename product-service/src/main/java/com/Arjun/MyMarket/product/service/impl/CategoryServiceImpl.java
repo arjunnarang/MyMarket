@@ -50,6 +50,24 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDtoList;
     }
 
+    @Override
+    public CategoryDto createCategory(CategoryDto categoryDto){
+
+        Category category = toCategoryEntity(categoryDto);
+        Category savedCategory = categoryRepo.save(category);
+
+        return toCategoryDto(savedCategory);
+    }
+
+    private Category toCategoryEntity(CategoryDto categoryDto){
+        Category category = new Category();
+
+        category.setTitle(categoryDto.getTitle());
+
+        category.setProducts(new ArrayList<>());
+
+        return category;
+    }
     private Category findCategoryById(Long id){
         return categoryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
