@@ -30,4 +30,16 @@ public class ReviewController {
     public ResponseEntity<ReviewDto> createReview(@PathVariable UUID productId, @Valid @RequestBody ReviewDto reviewDto){
         return ResponseEntity.ok(reviewService.createReview(productId, reviewDto));
     }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable Long reviewId, ReviewDto dto){
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, dto));
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId){
+        reviewService.deleteReview(reviewId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

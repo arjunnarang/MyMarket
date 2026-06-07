@@ -50,6 +50,29 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
+    @Override
+    public ReviewDto updateReview(Long reviewId, ReviewDto reviewDto){
+        Review review = findReview(reviewId);
+        review.setTitle(reviewDto.getTitle());
+        review.setComment(reviewDto.getComment());
+        review.setRating(reviewDto.getRating());
+        return toReviewDto(reviewRepo.save(review));
+
+    }
+
+    @Override
+    public void deleteReview(Long reviewId){
+        Review review = findReview(reviewId);
+
+        review.setProduct(null);
+
+        reviewRepo.deleteById(reviewId);
+    }
+
+    private Review findReview(Long id){
+        return reviewRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+    }
+
     private ReviewDto toReviewDto(Review review){
         ReviewDto dto = new ReviewDto();
 
