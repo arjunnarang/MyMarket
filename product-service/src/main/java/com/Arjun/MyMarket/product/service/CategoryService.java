@@ -15,4 +15,8 @@ public interface CategoryService {
     List<CategoryDto> getCategoriesByProductId(UUID id);
 
     CategoryDto createCategory(CategoryDto categoryDto);
+
+    CategoryDto updateCategory(Long id, CategoryDto dto);
+
+    void deleteCategory(Long id);
 }

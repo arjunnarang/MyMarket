@@ -59,6 +59,34 @@ public class CategoryServiceImpl implements CategoryService {
         return toCategoryDto(savedCategory);
     }
 
+    @Override
+    public CategoryDto updateCategory(Long id, CategoryDto categoryDto){
+
+        Category category = categoryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        category.setTitle(categoryDto.getTitle());
+
+        return toCategoryDto(categoryRepo.save(category));
+    }
+
+    @Override
+    public void deleteCategory(Long id){
+        Category category = findCategoryById(id);
+
+//        Here the owning entity is Category so if we remove category from produc like we did in following code line
+//        it wont matter because hibernate only look for changes related to owning entity
+        //category.getProducts().stream().forEach(product -> product.getCategories().remove(category));
+
+        //Now this line changes the owning entity so hibernate automatically updates the join table between categories
+        //and products. It will remove category from product as well
+        category.getProducts().clear();
+
+        //Now we dont need to save the category is this class is transactional so hibernate will keep the transaction open
+        //when we call findByCategory and it tracks every change that owning entities encounter
+
+        //categoryRepo.save(category);
+        categoryRepo.delete(category);
+    }
     private Category toCategoryEntity(CategoryDto categoryDto){
         Category category = new Category();
 
