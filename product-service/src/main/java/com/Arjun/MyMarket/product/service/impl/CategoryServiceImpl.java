@@ -30,35 +30,51 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-
+    //Fetch all categories
     public List<CategoryDto> getAllCategories(){
+
+        //finding all categories using repo which returns list of category entity
         List <Category> categoryEntity = categoryRepo.findAll();
+
+        //converting the list of category entity to the list of category dto
         return categoryEntity.stream().map(this::toCategoryDto).collect(Collectors.toList());
     }
 
+    //fetch category by category id
     @Override
     public CategoryDto getCategoryById(Long id){
         Category category = findCategoryById(id);
         return toCategoryDto(category);
     }
 
+    //fetch all categories in a product using product id
     @Override
     public List<CategoryDto> getCategoriesByProductId(UUID id){
+
+        //finding categories from repo using product id which returns category list of entities
         List<Category> categoryList = categoryRepo.findCategoriesByProductId(id);
+
+        //converting the list of category entity to the list of category dto
         List<CategoryDto> categoryDtoList = categoryList.stream().map(this::toCategoryDto).collect(Collectors.toList());
 
         return categoryDtoList;
     }
 
+    //create category
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto){
 
+        //converting received categoryDto to category entity
         Category category = toCategoryEntity(categoryDto);
+
+        //saving category entity into db
         Category savedCategory = categoryRepo.save(category);
 
+        //converting saved category to dto and returning
         return toCategoryDto(savedCategory);
     }
 
+    //update category
     @Override
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto){
 
@@ -69,6 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
         return toCategoryDto(categoryRepo.save(category));
     }
 
+    //delete category
     @Override
     public void deleteCategory(Long id){
         Category category = findCategoryById(id);
@@ -87,6 +104,8 @@ public class CategoryServiceImpl implements CategoryService {
         //categoryRepo.save(category);
         categoryRepo.delete(category);
     }
+
+    //to convert dto to category entity
     private Category toCategoryEntity(CategoryDto categoryDto){
         Category category = new Category();
 
@@ -96,10 +115,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         return category;
     }
+
+    //to fetch category from categoryRepo
     private Category findCategoryById(Long id){
         return categoryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
 
+    //to convert category entity to dto
     private CategoryDto toCategoryDto(Category category){
         CategoryDto dto = new CategoryDto();
 

@@ -50,8 +50,10 @@ public class ProductServiceImpl implements ProductService {
 
     public List<ProductDto> getAllProducts(){
 
-
+        //fetching products from db that return list of product entities
         List<Product> productList = productRepo.findAll();
+
+        //creating a list of product dtos and converting those entities into dtos and adding them in dto list
         List<ProductDto> productDtoList = new ArrayList<>();
 
         for(Product product : productList){
@@ -61,14 +63,22 @@ public class ProductServiceImpl implements ProductService {
         return productDtoList;
     }
 
+    //adding category to product
     @Override
     public ProductDto addCategoryToProduct(UUID productId, Long categoryId){
+
+        //fetching product
         Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        //fetching category
         Category category = categoryRepo.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+        //adding category to product
         if(!product.getCategories().contains(category)){
             product.getCategories().add(category);
         }
+
+        //adding product to category table
         if(!category.getProducts().contains(product)){
             category.getProducts().add(product);
         }
@@ -123,9 +133,13 @@ public class ProductServiceImpl implements ProductService {
         return toDto(product);
     }
 
+    //fetch products in particular category
     public List<ProductDto> getProductsByCategoryId(Long categoryId) {
 
+        //find products using category id
         List<Product> products = productRepo.findByCategoryId(categoryId);
+
+        //creating list of product dto and adding product from previous entity list to dto list
         List<ProductDto> productDtoList = new ArrayList<>();
         for (Product product : products) {
             productDtoList.add(toDto(product));
@@ -134,6 +148,7 @@ public class ProductServiceImpl implements ProductService {
         return productDtoList;
     }
 
+    //remove category from product
     public ProductDto removeCategoryFromProduct(UUID productId, Long categoryId) {
         Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         Category category = categoryRepo.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
