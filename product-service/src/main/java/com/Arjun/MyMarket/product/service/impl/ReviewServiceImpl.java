@@ -64,7 +64,11 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long reviewId){
         Review review = findReview(reviewId);
 
-        review.setProduct(null);
+        //Review -> transaction owning entity
+        //Product -> transaction non owning entity
+        //As deleting review directly removes foreign key that is productid so association is cleared and
+        //hibernate automatically clears the connection between product and review
+        //review.setProduct(null);
 
         reviewRepo.deleteById(reviewId);
     }
