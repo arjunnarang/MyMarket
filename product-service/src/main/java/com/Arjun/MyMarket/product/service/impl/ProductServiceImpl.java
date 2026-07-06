@@ -250,6 +250,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setCategories(product.getCategories() == null ? new ArrayList<>(): product.getCategories().stream().map(category -> toDtoForCategory(category)).collect(Collectors.toList()));
         dto.setReviews(dto.getReviews() == null ? new ArrayList<>() : product.getReviews().stream().map(review -> toDtoForReview(review)).collect(Collectors.toList()));
         dto.setCreatedAt(product.getCreatedAt());
+        dto.setUpdatedAt(product.getUpdatedAt());
         return dto;
     }
 

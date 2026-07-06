@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
@@ -21,8 +22,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Product {
+public class Product extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -45,8 +45,5 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
-    //@CreationTimestamp //this annotation is for hibernate time and it works normally to store time stamp
-    @CreatedDate  //this annotation is for JPA auditing and it is used with @EnableJpaAuditing in main class and also @EntityListeners in this class
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+
 }

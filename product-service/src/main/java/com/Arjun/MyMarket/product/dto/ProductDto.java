@@ -31,4 +31,5 @@ public class ProductDto {
     private List<CategoryDto> categories;
     private List<ReviewDto> reviews;
     private Instant createdAt;
+    private Instant updatedAt;
 }

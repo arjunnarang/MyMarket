@@ -17,7 +17,7 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,5 @@ public class Review {
     @ManyToOne
     private Product product;
 
-    @CreationTimestamp
-    private Instant createdAt;
+
 }
