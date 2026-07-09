@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+@Table(name = "order_items")
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,26 +32,8 @@ public class CartItem {
     private BigDecimal lineTotal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-    private Cart cart;
-
-    @PrePersist
-    @PreUpdate
-    void reCalc(){
-        if(quantity == null){
-            quantity = 1;
-        }
-
-        if(discountPercent == null){
-            discountPercent = 0;
-        }
-
-        if(unitPrice == null){
-            unitPrice = BigDecimal.ZERO;
-        }
-
-        lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
     public Long getId() {
         return id;
@@ -109,4 +91,3 @@ public class CartItem {
         this.lineTotal = lineTotal;
     }
 }
-
