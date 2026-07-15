@@ -1,0 +1,15 @@
+package com.Arjun.MyMarket.cart_order.dto;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record CartItemResponse(
+        Long id,
+        UUID productId,
+        String productTitle,
+        BigDecimal unitPrice,
+        Integer discountPercent,
+        Integer quantity,
+        BigDecimal lineTotal
+) {
+}
