@@ -12,7 +12,7 @@ public record CartResponse(
         String userId,
         CartStatus staus,
         BigDecimal totalAMount,
-        List<CartItem> cartItems,
+        List<CartItemResponse> cartItems,
         Instant createdAt,
         Instant updatedAt,
         Instant checkedOutAt
