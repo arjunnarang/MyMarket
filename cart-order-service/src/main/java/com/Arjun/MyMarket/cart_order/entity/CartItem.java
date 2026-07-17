@@ -108,5 +108,13 @@ public class CartItem {
     public void setLineTotal(BigDecimal lineTotal) {
         this.lineTotal = lineTotal;
     }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
 }
 
