@@ -23,6 +23,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleExternalServiceException(ExternalServiceException ex, HttpServletRequest request){
         return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request.getRequestURI(), null);
     }
+
+    public ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request){
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI(), null);
+    }
+
     private ResponseEntity<ApiError> build(HttpStatus status, String message, String path, Map<String, String> validationErrors){
         return ResponseEntity.status(status).body(new ApiError(
                 Instant.now(),
