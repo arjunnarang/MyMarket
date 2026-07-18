@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request.getRequestURI(), null);
 
     }
+
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ApiError> handleExternalServiceException(ExternalServiceException ex, HttpServletRequest request){
+        return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request.getRequestURI(), null);
+    }
     private ResponseEntity<ApiError> build(HttpStatus status, String message, String path, Map<String, String> validationErrors){
         return ResponseEntity.status(status).body(new ApiError(
                 Instant.now(),
@@ -28,6 +33,7 @@ public class GlobalExceptionHandler {
                 validationErrors
         ));
     }
+
     public record ApiError
         (Instant timeStamp,
         int status,
