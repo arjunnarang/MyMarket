@@ -1,16 +1,17 @@
 package com.Arjun.MyMarket.cart_order.service;
 
-import com.Arjun.MyMarket.cart_order.dto.AddCartItemRequest;
-import com.Arjun.MyMarket.cart_order.dto.CartItemResponse;
-import com.Arjun.MyMarket.cart_order.dto.CartResponse;
-import com.Arjun.MyMarket.cart_order.dto.UpdateCartItemRequest;
+import com.Arjun.MyMarket.cart_order.client.ProductClient;
+import com.Arjun.MyMarket.cart_order.dto.*;
 import com.Arjun.MyMarket.cart_order.entity.Cart;
 import com.Arjun.MyMarket.cart_order.entity.CartItem;
 import com.Arjun.MyMarket.cart_order.entity.CartStatus;
 import com.Arjun.MyMarket.cart_order.exception.BusinessRuleException;
+import com.Arjun.MyMarket.cart_order.exception.ExternalServiceException;
 import com.Arjun.MyMarket.cart_order.repository.CartItemRepository;
 import com.Arjun.MyMarket.cart_order.repository.CartRepository;
 //import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +19,22 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
 public class CartServiceImpl implements CartService{
 
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    //private final CartItemRepository cartItemRepository;
+    private final ProductClient productClient;
 
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository){
+    private static final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
+
+    public CartServiceImpl(CartRepository cartRepository, ProductClient productClient){
         this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
+        //this.cartItemRepository = cartItemRepository;
+        this.productClient = productClient;
     }
 
     //to get the cart for particular user
@@ -40,32 +46,56 @@ public class CartServiceImpl implements CartService{
         return toResponse(getOrCreateActiveCart(userId));
     }
 
+
+    //adding item to cart
     @Override
     public CartResponse addItem(String userId, AddCartItemRequest request){
         Cart cart = getOrCreateActiveCart(userId);
 
-        CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProductId().equals(request.productId()))
-                .findFirst()
-                .orElseGet(() -> {
-                    CartItem newItem = new CartItem();
-                    newItem.setCart(cart);
-                    newItem.setProductId(request.productId());
-                    cart.getCartItems().add(newitem);
-                    return newItem;
-                });
+        //fetching product from product service
+        ProductSnapshot product = fetchProduct(request.productId());
 
-        cartItem.setProductTitle(product.title);
-        cartItem.setUnitPrice(finalUnitPrice(product.price(), product.discount()));
-        cartItem.setDiscountPercent(defaultZero(product.discount()));
-        cartItem.setQuantity(safeQuantity(cartItem.getQuantity()) + request.quantity());
+       log.debug("This is the product: {}", product);
+//
+//        CartItem cartItem = cart.getCartItems().stream()
+//                .filter(item -> item.getProductId().equals(request.productId()))
+//                .findFirst()
+//                .orElseGet(() -> {
+//                    CartItem newItem = new CartItem();
+//                    newItem.setCart(cart);
+//                    newItem.setProductId(request.productId());
+//                    cart.getCartItems().add(newItem);
+//                    return newItem;
+//                });
+//
+//        cartItem.setProductTitle(product.title());
+//        cartItem.setUnitPrice(finalUnitPrice(product.price(), product.discount()));
+//        cartItem.setDiscountPercent(defaultZero(product.discount()));
+//        cartItem.setQuantity(safeQuantity(cartItem.getQuantity()) + request.quantity());
+//
+//        //cartItemRepository.save(cartItem);
+//
+//        //we dont need to save the cartItem in cartItemRepository as cart is our owning entity so hibernate does the dirty checking
+//        //and checks if children entity like cartitem is updated or not and it will save the cartItem in db while saving the cart
+//        return toResponse(cartRepository.save(cart));
 
-        //cartItemRepository.save(cartItem);
+        return null;
 
-        //we dont need to save the cartItem in cartItemRepository as cart is our owning entity so hibernate does the dirty checking
-        //and checks if children entity like cartitem is updated or not and it will save the cartItem in db while saving the cart
-        return toResponse(cartRepository.save(cart));
+    }
 
+    //fetching the product from the product service using productClient interface
+    private ProductSnapshot fetchProduct(UUID productId){
+        try{
+            ProductSnapshot product= productClient.getProductById(productId);
+            if(product == null || Boolean.FALSE.equals(product.live())){
+                throw new BusinessRuleException("Product is not available: " + productId);
+            }
+            return product;
+        }catch(BusinessRuleException ex){
+            throw ex;
+        }catch(Exception ex){
+            throw new ExternalServiceException("Failed to load the product: " + productId, ex);
+        }
     }
 
     private int safeQuantity(Integer qty){
