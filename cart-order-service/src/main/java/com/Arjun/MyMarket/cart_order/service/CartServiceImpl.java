@@ -7,6 +7,7 @@ import com.Arjun.MyMarket.cart_order.entity.CartItem;
 import com.Arjun.MyMarket.cart_order.entity.CartStatus;
 import com.Arjun.MyMarket.cart_order.exception.BusinessRuleException;
 import com.Arjun.MyMarket.cart_order.exception.ExternalServiceException;
+import com.Arjun.MyMarket.cart_order.exception.ResourceNotFoundException;
 import com.Arjun.MyMarket.cart_order.repository.CartItemRepository;
 import com.Arjun.MyMarket.cart_order.repository.CartRepository;
 //import jakarta.transaction.Transactional;
@@ -56,33 +57,87 @@ public class CartServiceImpl implements CartService{
         ProductSnapshot product = fetchProduct(request.productId());
 
        log.debug("This is the product: {}", product);
-//
-//        CartItem cartItem = cart.getCartItems().stream()
-//                .filter(item -> item.getProductId().equals(request.productId()))
-//                .findFirst()
-//                .orElseGet(() -> {
-//                    CartItem newItem = new CartItem();
-//                    newItem.setCart(cart);
-//                    newItem.setProductId(request.productId());
-//                    cart.getCartItems().add(newItem);
-//                    return newItem;
-//                });
-//
-//        cartItem.setProductTitle(product.title());
-//        cartItem.setUnitPrice(finalUnitPrice(product.price(), product.discount()));
-//        cartItem.setDiscountPercent(defaultZero(product.discount()));
-//        cartItem.setQuantity(safeQuantity(cartItem.getQuantity()) + request.quantity());
-//
-//        //cartItemRepository.save(cartItem);
-//
-//        //we dont need to save the cartItem in cartItemRepository as cart is our owning entity so hibernate does the dirty checking
-//        //and checks if children entity like cartitem is updated or not and it will save the cartItem in db while saving the cart
-//        return toResponse(cartRepository.save(cart));
 
-        return null;
+        CartItem cartItem = cart.getCartItems().stream()
+                .filter(item -> item.getProductId().equals(request.productId()))
+                .findFirst()
+                .orElseGet(() -> {
+                    CartItem newItem = new CartItem();
+                    newItem.setCart(cart);
+                    newItem.setProductId(request.productId());
+                    cart.getCartItems().add(newItem);
+                    return newItem;
+                });
+
+        cartItem.setProductTitle(product.title());
+        cartItem.setUnitPrice(finalUnitPrice(product.price(), product.discount()));
+        cartItem.setDiscountPercent(defaultZero(product.discount()));
+        cartItem.setQuantity(safeQuantity(cartItem.getQuantity()) + request.quantity());
+
+        //cartItemRepository.save(cartItem);
+
+        //we dont need to save the cartItem in cartItemRepository as cart is our owning entity so hibernate does the dirty checking
+        //and checks if children entity like cartitem is updated or not and it will save the cartItem in db while saving the cart
+        return toResponse(cartRepository.save(cart));
+
+        //return null;
 
     }
 
+    @Override
+    public CartResponse removeItem(String userId, String productId) {
+        Cart cart = getOrCreateActiveCart(userId);
+        CartItem item = findCartItem(cart, parseProductId(productId));
+
+        cart.getCartItems().remove(item);
+
+        return toResponse(cartRepository.save(cart));
+    }
+
+    @Override
+    public CartResponse updateItem(String userId, String productId, UpdateCartItemRequest request) {
+        Cart cart = getOrCreateActiveCart(userId);
+
+        CartItem item = findCartItem(cart, parseProductId(productId));
+        item.setQuantity(request.quantity());
+
+        return toResponse(cartRepository.save(cart));
+    }
+
+    @Override
+    public void clearCart(String userId) {
+        Cart cart = getOrCreateActiveCart(userId);
+        cart.getCartItems().clear();
+        cartRepository.save(cart);
+    }
+
+    //finding cartItem from cart
+    public CartItem findCartItem(Cart cart, UUID productId){
+        try{
+            return cart.getCartItems().stream()
+                    .filter(item -> item.getProductId().equals(productId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Item is not present: " + productId));
+        }catch(ResourceNotFoundException ex){
+
+            //throwing again so that caller can handle it
+            throw ex;
+        }catch(Exception ex){ // catching and throwing unexpected exceptions
+
+
+            throw new RuntimeException("Cart item not found");
+        }
+
+    }
+
+    public UUID parseProductId(String productId){
+
+        try{
+            return UUID.fromString(productId);
+        } catch (IllegalArgumentException e) {
+            throw new BusinessRuleException("Invalid product id: " + productId);
+        }
+    }
     //fetching the product from the product service using productClient interface
     private ProductSnapshot fetchProduct(UUID productId){
         try{
@@ -112,20 +167,6 @@ public class CartServiceImpl implements CartService{
         return value == null ? 0 : value;
     }
 
-    @Override
-    public CartResponse updateItem(String userId, String productId, UpdateCartItemRequest request) {
-        return null;
-    }
-
-    @Override
-    public CartResponse removeItem(String userId, String productId) {
-        return null;
-    }
-
-    @Override
-    public void clearCart(String userId) {
-
-    }
 
     //get the cart if exists with Active status or create a new one if does not exists with ACTIVE status
     public Cart getOrCreateActiveCart(String userId){

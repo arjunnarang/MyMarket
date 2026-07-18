@@ -2,6 +2,7 @@ package com.Arjun.MyMarket.cart_order.controller;
 
 import com.Arjun.MyMarket.cart_order.dto.AddCartItemRequest;
 import com.Arjun.MyMarket.cart_order.dto.CartResponse;
+import com.Arjun.MyMarket.cart_order.dto.UpdateCartItemRequest;
 import com.Arjun.MyMarket.cart_order.service.CartService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -33,4 +34,19 @@ public class CartController {
         return ResponseEntity.ok(cartService.addItem(userId, request));
     }
 
+    @PutMapping("/{userId}/items/{productId}")
+    public CartResponse updateitem(@PathVariable String userId, @PathVariable String productId, @RequestBody UpdateCartItemRequest request){
+        return cartService.updateItem(userId, productId, request);
+    }
+
+    @DeleteMapping("/{userId}/items/{productId}")
+    public CartResponse removeItem(@PathVariable String userId, @PathVariable String productId){
+
+        return cartService.removeItem(userId, productId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> clearCart(@PathVariable String userId){
+        return cartService.clearCart(userId);
+    }
 }
