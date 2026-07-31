@@ -1,0 +1,30 @@
+server:
+  port: 8079
+
+spring:
+  application:
+    name: CONFIG-SERVER
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GITHUB_URI:https://github.com/arjunnarang/my_market_config.git}
+          username: ${GITHUB_USERNAME:arjunnarang}
+          password: ${GITHUB_PASSWORD:GITHUB_PAT_TOKEN}
+          defaultLabel: main
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+
+#  instance:
+#    preferIpAddress: true
+
+#management:
+#  web:
+#    exposure:
+#      include: health,info
+
+encrypt:
+  key: 3242ndfnvkdnfkndkvnfbknckbvnkndvienvirn
