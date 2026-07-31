@@ -31,3 +31,7 @@ management:
   endpoint:
     gateway:
       access: READ_ONLY
+
+product:
+  service:
+    id: lb://PRODUCT-SERVICE
