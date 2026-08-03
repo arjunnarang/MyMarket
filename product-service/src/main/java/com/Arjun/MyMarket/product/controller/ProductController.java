@@ -6,6 +6,8 @@ import com.Arjun.MyMarket.product.service.ProductService;
 import com.Arjun.MyMarket.product.service.impl.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +19,18 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
+@RefreshScope
 public class ProductController {
 
     private final ProductService productService;
 
+    @Value("${new.property}")
+    private String newProperty;
+
+    @GetMapping("/test-prop")
+    public ResponseEntity<String> testingNewProperty(){
+        return ResponseEntity.ok(newProperty);
+    }
     //getting product by Id
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable UUID productId){
