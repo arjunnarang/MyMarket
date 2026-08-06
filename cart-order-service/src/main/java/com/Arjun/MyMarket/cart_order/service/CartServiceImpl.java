@@ -139,12 +139,16 @@ public class CartServiceImpl implements CartService{
         }
     }
     //fetching the product from the product service using productClient interface
-    private ProductSnapshot fetchProduct(UUID productId){
+    public ProductSnapshot fetchProduct(UUID productId){
         try{
             ProductSnapshot product= productClient.getProductById(productId);
+            log.debug("This is product {}", product);
+
             if(product == null || Boolean.FALSE.equals(product.live())){
                 throw new BusinessRuleException("Product is not available: " + productId);
             }
+
+           
             return product;
         }catch(BusinessRuleException ex){
             throw ex;
