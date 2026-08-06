@@ -10,8 +10,10 @@ spring:
         git:
           uri: ${GITHUB_URI:https://github.com/arjunnarang/my_market_config.git}
           username: ${GITHUB_USERNAME:arjunnarang}
-          password: ${GITHUB_PASSWORD:GITHUB_PAT_TOKEN}
+          password: ${GITHUB_PAT_TOKEN}
+          #password: ${GITHUB_PASSWORD:GITHUB_PAT_TOKEN}
           defaultLabel: main
+
 
 #eureka:
 #  client:
