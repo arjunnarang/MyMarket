@@ -20,7 +20,11 @@ public class RouteConfig {
                 //and this rewritten path will be connected to destination URI
                 .route("product-route", route ->
                         route.path("/product-service/**")
-                                .filters(f -> f.rewritePath("/product-service/?(?<remaining>.*)", "/${remaining}"))
+                                .filters(f -> f
+                                        .addRequestHeader("x-api-gateway", "value from api gateway")
+                                        .circuitBreaker(c -> c.setName("productCircuitBreaker")
+                                                                        .setFallbackUri("forward:/product-fallback"))
+                                        .rewritePath("/product-service/?(?<remaining>.*)", "/${remaining}"))
                                 .uri(productServiceId))
                 .build();
     }
