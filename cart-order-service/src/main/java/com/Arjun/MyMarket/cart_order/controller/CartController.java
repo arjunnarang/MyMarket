@@ -7,6 +7,7 @@ import com.Arjun.MyMarket.cart_order.service.CartService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,7 @@ public class CartController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> clearCart(@PathVariable String userId){
-        return cartService.clearCart(userId);
+        cartService.clearCart(userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
