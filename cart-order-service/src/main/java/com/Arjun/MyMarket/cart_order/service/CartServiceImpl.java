@@ -11,6 +11,7 @@ import com.Arjun.MyMarket.cart_order.exception.ResourceNotFoundException;
 import com.Arjun.MyMarket.cart_order.repository.CartItemRepository;
 import com.Arjun.MyMarket.cart_order.repository.CartRepository;
 //import jakarta.transaction.Transactional;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -138,6 +139,8 @@ public class CartServiceImpl implements CartService{
             throw new BusinessRuleException("Invalid product id: " + productId);
         }
     }
+
+    @Retry(name="createOrderRetry", fallbackMethod = "createOrderFallback")
     //fetching the product from the product service using productClient interface
     public ProductSnapshot fetchProduct(UUID productId){
         try{
@@ -155,6 +158,13 @@ public class CartServiceImpl implements CartService{
         }catch(Exception ex){
             throw new ExternalServiceException("Failed to load the product: " + productId, ex);
         }
+    }
+
+    //fallback method - method signature should be same as parent method where fallback is applied
+    //Throwable has to be added as paramter in fallback method
+    public ProductSnapshot createOrderFallback(UUID productId, Throwable t){
+        log.info("Fallback method activated!!!");
+        return null;
     }
 
     private int safeQuantity(Integer qty){
