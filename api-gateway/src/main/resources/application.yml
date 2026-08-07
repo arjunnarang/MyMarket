@@ -36,6 +36,10 @@ product:
   service:
     id: lb://PRODUCT-SERVICE
 
+cartorder:
+  service:
+    id: lb://CART-ORDER-SERVICE
+
 resilience4j.circuitbreaker:
   configs:
     default:
