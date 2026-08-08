@@ -8,3 +8,11 @@ docker run --name postgres-db -e POSTGRES_USER=Arjun -e POSTGRES_PASSWORD=dummyp
 /api/v1/products/fetch/id
 /api/v1/products/fetchAllProducts
 /api/v1/products/fetchByCategoryId/id
+
+## Command to run redis in docker
+
+```bash
+
+docker run -d --name redis-server -p 6379:6379 redis
+
+```

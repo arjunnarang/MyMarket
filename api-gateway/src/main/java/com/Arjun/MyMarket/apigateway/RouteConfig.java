@@ -1,11 +1,14 @@
 package com.Arjun.MyMarket.apigateway;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
@@ -28,6 +31,10 @@ public class RouteConfig {
                         route.path("/product-service/**")
                                 .filters(f -> f
                                         .addRequestHeader("x-api-gateway", "value from api gateway")
+                                        .requestRateLimiter(rateLimitConfig -> rateLimitConfig
+                                                .setKeyResolver(keyResolver())  //setting key resolver here
+                                                .setRateLimiter(redisRateLimiter()))
+
                                         .circuitBreaker(c -> c.setName("productCircuitBreaker")
                                                                         .setFallbackUri("forward:/product-fallback"))
                                         .rewritePath("/product-service/?(?<remaining>.*)", "/${remaining}"))
@@ -51,4 +58,20 @@ public class RouteConfig {
                 .build();
     }
 
+
+    //this keyresolver is basically on what basis does api know that requests are coming from a single user
+    //like ipaddress, some header, idempotency key, or something like that.
+    @Bean
+    public KeyResolver keyResolver(){
+        return exchange -> Mono.just(exchange.getRequest().getHeaders().getFirst("user"));
+    }
+
+    @Bean
+    public RedisRateLimiter redisRateLimiter(){
+        //replenishRate - rate at which bucket is filled with tokens in 1 second
+        //burstCapacity - maximum number of requests a user is allowed in a single second or maximum tokens bucket can hold
+        //requestedToken - property is how many tokens a request costs default is 1 means 1 token is 1 request
+        //note: BurstCapacity(1) must be greater than or equal than replenishRate(3)
+        return new RedisRateLimiter(1,1, 2);
+    }
 }
