@@ -9,4 +9,8 @@ import java.util.UUID;
 public interface UserService {
 
     UserResponse getById(UUID id);
+
+    UserResponse createUser(UserResponse userResponse);
+
+    UserResponse getByEmail(String email);
 }
