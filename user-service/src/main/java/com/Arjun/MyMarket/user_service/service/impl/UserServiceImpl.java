@@ -121,7 +121,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(user);
     }
-    
+
+    @Override
+    public void changeRole(UUID id, Role role){
+      User user =   userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+
+      user.setRole(role);
+      userRepository.save(user);
+    }
+
     private UserResponse toResponseDto(User user){
 
         log.debug("This is user entity: {}", user);

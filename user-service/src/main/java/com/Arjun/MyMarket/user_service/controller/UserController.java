@@ -1,6 +1,7 @@
 package com.Arjun.MyMarket.user_service.controller;
 
 
+import com.Arjun.MyMarket.user_service.dto.ChangeRoleRequest;
 import com.Arjun.MyMarket.user_service.dto.UserResponse;
 import com.Arjun.MyMarket.user_service.service.UserService;
 import jakarta.validation.Valid;
@@ -50,6 +51,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id){
         userService.deleteUser(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/change-role")
+    public ResponseEntity<Void> changeRole(@RequestBody ChangeRoleRequest changeRoleRequest){
+        userService.changeRole(changeRoleRequest.id(), changeRoleRequest.role());
 
         return ResponseEntity.noContent().build();
     }
