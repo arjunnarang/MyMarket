@@ -21,11 +21,21 @@ public class Order {
     @Column(nullable = false, length = 120)
     private String userId;
 
+    @Column(nullable = false, length = 120)
+    private String billingName;
+
+    @Column(nullable = false, length = 120)
+    private String billingPhone;
+
     @Column(nullable = false, length = 400)
     private String shippingAddress;
 
     @Column(length = 80)
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length= 20)
@@ -69,6 +79,34 @@ public class Order {
         updatedAt = Instant.now();
     }
 
+    public String getBillingName() {
+        return billingName;
+    }
+
+    public void setBillingName(String billingName) {
+        this.billingName = billingName;
+    }
+
+    public String getBillingPhone() {
+        return billingPhone;
+    }
+
+    public void setBillingPhone(String billingPhone) {
+        this.billingPhone = billingPhone;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -99,14 +137,6 @@ public class Order {
 
     public void setShippingAddress(String shippingAddress) {
         this.shippingAddress = shippingAddress;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public OrderStatus getStatus() {
