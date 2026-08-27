@@ -53,6 +53,9 @@ public class Order {
     @Column
     private Instant cancelledAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String extraInformation;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -79,8 +82,20 @@ public class Order {
         updatedAt = Instant.now();
     }
 
+    public String getExtraInformation() {
+        return extraInformation;
+    }
+
+    public void setExtraInformation(String extraInformation) {
+        this.extraInformation = extraInformation;
+    }
+
     public String getBillingName() {
         return billingName;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
     public void setBillingName(String billingName) {
