@@ -40,6 +40,7 @@ public class RouteConfig {
                                         .rewritePath("/product-service/?(?<remaining>.*)", "/${remaining}"))
                                 .uri(productServiceId))
 
+
                 .route("cart-order-service", route ->
                         route.path("/cart-order-service/**")
                                 .filters(f -> f
@@ -72,6 +73,6 @@ public class RouteConfig {
         //burstCapacity - maximum number of requests a user is allowed in a single second or maximum tokens bucket can hold
         //requestedToken - property is how many tokens a request costs default is 1 means 1 token is 1 request
         //note: BurstCapacity(1) must be greater than or equal than replenishRate(3)
-        return new RedisRateLimiter(1,1, 2);
+        return new RedisRateLimiter(1,20, 5);
     }
 }

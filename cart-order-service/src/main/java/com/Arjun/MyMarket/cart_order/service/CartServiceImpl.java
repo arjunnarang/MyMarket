@@ -81,8 +81,6 @@ public class CartServiceImpl implements CartService{
         //and checks if children entity like cartitem is updated or not and it will save the cartItem in db while saving the cart
         return toResponse(cartRepository.save(cart));
 
-        //return null;
-
     }
 
     @Override
@@ -160,7 +158,8 @@ public class CartServiceImpl implements CartService{
         }
     }
 
-    //fallback method - method signature should be same as parent method where fallback is applied
+    //fallback method - This fallback is for retry mechanism.
+    // Method signature should be same as parent method where fallback is applied
     //Throwable has to be added as paramter in fallback method
     public ProductSnapshot createOrderFallback(UUID productId, Throwable t){
         log.info("Fallback method activated!!!");

@@ -2,6 +2,7 @@ package com.Arjun.MyMarket.cart_order.service;
 
 import com.Arjun.MyMarket.cart_order.dto.CheckoutRequest;
 import com.Arjun.MyMarket.cart_order.dto.OrderResponse;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,9 +14,10 @@ public interface OrderService {
 
     OrderResponse getOrderByNumber(String orderNumber);
 
-    List<OrderResponse> orderResponses(String userId);
+    List<OrderResponse> getOrdersByUserId(String userId);
 
-    OrderResponse cancelOrder(String orderId);
+    OrderResponse cancelOrder(Long orderId);
 
     void releaseReservedStock(UUID productId, Integer quantity);
+
 }
