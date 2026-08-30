@@ -173,4 +173,16 @@ public class InventoryItem {
     public void setReasonToAdjust(String reasonToAdjust) {
         this.reasonToAdjust = reasonToAdjust;
     }
+
+    public int getTotalQuantity(){
+        return safeInt(availableQuantity) + safeInt(reservedQuantity);
+    }
+
+    public int safeInt(Integer value){
+        return value == null ? 0 : value;
+    }
+
+    public boolean isLowStock(){
+        return safeInt(availableQuantity) <= safeInt(reorderLevel);
+    }
 }
