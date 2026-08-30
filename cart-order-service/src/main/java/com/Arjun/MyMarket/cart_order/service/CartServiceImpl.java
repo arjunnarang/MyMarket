@@ -52,6 +52,8 @@ public class CartServiceImpl implements CartService{
     //adding item to cart
     @Override
     public CartResponse addItem(String userId, AddCartItemRequest request){
+
+        //this fetches active cart if present or creates a new cart
         Cart cart = getOrCreateActiveCart(userId);
 
         //fetching product from product service
@@ -59,6 +61,7 @@ public class CartServiceImpl implements CartService{
 
        log.debug("This is the product: {}", product);
 
+       //it finds the cart item which is required to be added more or if not present then creates the new item
         CartItem cartItem = cart.getCartItems().stream()
                 .filter(item -> item.getProductId().equals(request.productId()))
                 .findFirst()
@@ -70,6 +73,7 @@ public class CartServiceImpl implements CartService{
                     return newItem;
                 });
 
+        //setting details of cart item
         cartItem.setProductTitle(product.title());
         cartItem.setUnitPrice(finalUnitPrice(product.price(), product.discount()));
         cartItem.setDiscountPercent(defaultZero(product.discount()));
@@ -83,26 +87,39 @@ public class CartServiceImpl implements CartService{
 
     }
 
+    //removing any cart item
     @Override
     public CartResponse removeItem(String userId, String productId) {
+
+        //fetching the cart
         Cart cart = getOrCreateActiveCart(userId);
+
+        //finding the cart item to be removed from the cart
         CartItem item = findCartItem(cart, parseProductId(productId));
 
+        //removing the item
         cart.getCartItems().remove(item);
 
         return toResponse(cartRepository.save(cart));
     }
 
+    //updating the items quantity
     @Override
     public CartResponse updateItem(String userId, String productId, UpdateCartItemRequest request) {
+
+        //fetching the cart
         Cart cart = getOrCreateActiveCart(userId);
 
+        //fetching the cart item whose quantity is to be adjusted
         CartItem item = findCartItem(cart, parseProductId(productId));
+
+        //setting the quantity
         item.setQuantity(request.quantity());
 
         return toResponse(cartRepository.save(cart));
     }
 
+    //clearing the cart completely
     @Override
     public void clearCart(String userId) {
         Cart cart = getOrCreateActiveCart(userId);
@@ -129,6 +146,7 @@ public class CartServiceImpl implements CartService{
 
     }
 
+    //receiving the productId in string format and returning it in UUID format
     public UUID parseProductId(String productId){
 
         try{
@@ -187,6 +205,7 @@ public class CartServiceImpl implements CartService{
             throw new BusinessRuleException("User id is required");
         }
 
+        //find the cart with ACTIVE status or creating a new cart
         return cartRepository.findByUserIdAndStatus(normalize(userId), CartStatus.ACTIVE)
                 .orElseGet(() -> {
                     Cart cart = new Cart();

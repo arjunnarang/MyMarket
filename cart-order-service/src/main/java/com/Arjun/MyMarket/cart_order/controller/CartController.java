@@ -24,17 +24,21 @@ public class CartController {
         this.cartService = cartService;
     }
 
+
+    //get cart of a user
     @GetMapping("/{userId}")
     public CartResponse getCart(@PathVariable String userId){
         return cartService.getCart(userId);
     }
 
+    //add particular item in cart
     @PostMapping("/{userId}/items")
     public ResponseEntity<CartResponse> addItem(@PathVariable String userId, @Valid @RequestBody AddCartItemRequest request){
         log.debug("Code is coming till here");
         return ResponseEntity.ok(cartService.addItem(userId, request));
     }
 
+    //update items quantity in cart
     @PutMapping("/{userId}/items/{productId}")
     public CartResponse updateitem(@PathVariable String userId, @PathVariable String productId, @RequestBody UpdateCartItemRequest request){
         return cartService.updateItem(userId, productId, request);

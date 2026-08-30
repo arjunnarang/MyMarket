@@ -128,6 +128,7 @@ public class OrderServiceImpl implements OrderService{
         return toResponse(order);
    }
 
+   //releasing the reserved stock if cart is cleared or item is removed
     @Override
     public void releaseReservedStock(UUID productId, Integer quantity) {
         try {
