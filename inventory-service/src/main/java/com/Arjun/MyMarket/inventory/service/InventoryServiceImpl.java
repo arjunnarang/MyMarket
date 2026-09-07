@@ -5,6 +5,7 @@ import com.Arjun.MyMarket.inventory.domain.InventoryItem;
 import com.Arjun.MyMarket.inventory.dto.CreateInventoryRequest;
 import com.Arjun.MyMarket.inventory.dto.InventoryResponse;
 import com.Arjun.MyMarket.inventory.dto.ProductSnapshot;
+import com.Arjun.MyMarket.inventory.dto.UpdateInventoryRequest;
 import com.Arjun.MyMarket.inventory.exception.BusinessRuleException;
 import com.Arjun.MyMarket.inventory.exception.ResourceNotFoundException;
 import com.Arjun.MyMarket.inventory.external.ProductClient;
@@ -65,7 +66,17 @@ public class InventoryServiceImpl implements InventoryService{
         return toResponse(repository.save(inventoryItem));
     }
 
-    
+    @Override
+    public InventoryResponse updateInventory(Long id, UpdateInventoryRequest request){
+        InventoryItem inventory = findInventoryEntity(id);
+
+        inventory.setProductName(request.productName());
+        inventory.setWarehouseLocation(request.warehouseLocation());
+        inventory.setReorderLevel(request.reorderLevel());
+        inventory.setActive(request.active());
+
+        return toResponse(repository.save(inventory));
+    }
 
     private String normalizeSku(String sku){
         if(StringUtils.isBlank(sku)){
